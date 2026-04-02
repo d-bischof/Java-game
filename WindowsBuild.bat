@@ -1,1 +1,1 @@
-@echo off & javac -d build src\*.java & jar cfe sprint.jar Sprint -C build . & java -jar sprint.jar & pause
+@echo off & javac -d build src\*.java & (echo Main-Class: Sprint) > MANIFEST.MF & jar cfm sprint.jar MANIFEST.MF -C build . & start java -jar sprint.jar & pause
