@@ -1,0 +1,1 @@
+@echo off & javac -d build src\*.java & jar cfe sprint.jar Sprint -C build . & java -jar sprint.jar & pause
