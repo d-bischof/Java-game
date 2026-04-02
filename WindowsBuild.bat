@@ -1,1 +1,1 @@
-@echo off & javac -d build src\*.java & (echo Main-Class: Sprint) > MANIFEST.MF & jar cfm sprint.jar MANIFEST.MF -C build . & start java -jar sprint.jar & pause
+@echo off & mkdir build 2>nul & dir /s /b src\*.java > files.txt & javac -d build @files.txt & del files.txt & echo Main-Class: Sprint > manifest.txt & jar cfm sprint.jar manifest.txt -C build . & start cmd /k java -jar sprint.jar
