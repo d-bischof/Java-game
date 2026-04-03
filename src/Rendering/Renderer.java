@@ -3,14 +3,16 @@ package Rendering;
 public class Renderer {
 
     public static void clear() {
-        System.out.print("\033[H");
-        System.out.flush();
+        Buffer.clearBackBuffer();
+    }
 
+    public static void pixel(int x, int y, char c) {
+        Buffer.SetBuffer(x, y, c);
     }
 
     public static void putChar(int x, int y, char c) {
         System.out.print("\033[" + y + ";" + x + "H" + c);
-        System.out.print("\033[?25l");
+        System.out.print("\033[?25l"); 
     }
 
     public static void drawline(int x1, int y1, int x2, int y2, char c) {
