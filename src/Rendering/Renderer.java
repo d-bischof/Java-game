@@ -31,7 +31,7 @@ public class Renderer {
             }
 
             for (int y = startY; y <= EndY; y++) {
-                putChar(x1, y, c);
+                pixel(x1, y, c);
             }
         }
         else {
@@ -55,7 +55,7 @@ public class Renderer {
 
             for (int x = startX; x <= EndX; x++) {
                 int y = (int) (m * (x - startX) + y1);
-                putChar(x, y, c);
+                pixel(x, y, c);
             }
         }
 

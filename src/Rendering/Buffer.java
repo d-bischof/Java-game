@@ -37,6 +37,9 @@ public class Buffer {
     }
 
     public void render() {
+
+        System.out.print("\033[H"); 
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -44,8 +47,9 @@ public class Buffer {
             }
             sb.append("\n");
         }
-        System.out.print("\033[H\033[2J"); // ANSI clear screen
         System.out.print(sb.toString());
+
+        System.out.flush();
     }
     
 }
