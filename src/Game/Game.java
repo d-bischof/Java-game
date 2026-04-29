@@ -10,6 +10,8 @@ public class Game {
     Buffer buffer;
     float player_x;
     float player_y;  
+    private long lastFrameTime;
+    private float dt;
 
     public Game() {
 
@@ -18,6 +20,7 @@ public class Game {
 
         player_x = 10.0f;
         player_y = 15.0f;
+        lastFrameTime = System.currentTimeMillis();
 
         System.out.print("\033[?25l");
 
@@ -29,7 +32,8 @@ public class Game {
 
     private void update() {
 
-        player_x += 0.1f;
+        float speed = 10.0f;
+        player_x += speed * dt;
 
     }
 
@@ -53,14 +57,13 @@ public class Game {
 
         while(running) {
 
+            long currentTime = System.currentTimeMillis();
+            dt = (currentTime - lastFrameTime) / 1000.0f;
+            lastFrameTime = currentTime;
+
             update();
             render();
 
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
 
     }
