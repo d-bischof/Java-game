@@ -1,1 +1,1 @@
-@echo off & mkdir build 2>nul & dir /s /b src\*.java > files.txt & javac -d build @files.txt & del files.txt & echo Main-Class: Sprint > manifest.txt & jar cfm sprint.jar manifest.txt -C build . & start cmd /k java -jar sprint.jar
+@echo off & mkdir build 2>nul & dir /s /b src\*.java > files.txt & javac -d build @files.txt & del files.txt & echo Main-Class: Sprint > manifest.txt & jar cfm sprint.jar manifest.txt -C build . & start cmd /k java -Djava.library.path=build -jar sprint.jar
