@@ -25,20 +25,21 @@ public class Buffer {
         char[][] temp = frontBuffer;
         frontBuffer = backBuffer;
         backBuffer = temp;
+        //clearBackBuffer();
 
     }
 
     public static void clearBackBuffer() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                backBuffer[y][x] = ' ';
+                backBuffer[y][x] = '.';
             }
         }
     }
 
     public void render() {
 
-        System.out.print("\033[H"); 
+        System.out.print("\033[H");
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < height; i++) {
@@ -50,6 +51,7 @@ public class Buffer {
         System.out.print(sb.toString());
 
         System.out.flush();
+
     }
-    
+
 }

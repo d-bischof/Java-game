@@ -1,8 +1,14 @@
 package Game;
 
 import Rendering.Buffer;
+import Sound.SoundManager;
 import Rendering.Renderer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import Game.Cactus;
+import Game.CactusManager;
+
+import java.util.ArrayList;
 
 public class Game {
     boolean running;
@@ -11,8 +17,17 @@ public class Game {
     private volatile int lastkey = -1;
     private Thread inputThread;
     private float dt;
+    private int buf_Height = 10;
+    private int buf_Width = 81;
+
+    private int ground = 6;
+
 
     private Player player;
+
+    private CactusManager cactusManager;
+
+    private SoundManager soundmanager;
 
     private ConcurrentLinkedQueue<Integer> keyQueue = new ConcurrentLinkedQueue<>();
     // Load native library
@@ -31,8 +46,14 @@ public class Game {
 
     public Game() {
         running = true;
-        buffer = new Buffer(81, 22);
-        player = new Player(10.0f, 15.0f);
+        buffer = new Buffer(buf_Width, buf_Height);
+        player = new Player(10.0f, ground);
+
+        cactusManager = new CactusManager(ground, buf_Width - 1);
+        soundmanager = new SoundManager();
+        soundmanager.loadSound("point", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\pickupCoin.wav");
+        soundmanager.loadSound("jump", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\jump.wav");
+        soundmanager.loadSound("death", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\hitHurt.wav");
 
         lastFrameTime = System.currentTimeMillis();
         System.out.print("\033[?25l");
@@ -68,26 +89,45 @@ public class Game {
     }
 
     private void handleKeyPress(int key) {
-        System.out.println("ascii: " + key + " char: " + (char)key);
+        //System.out.println("ascii: " + key + " char: " + (char)key);
         switch(key) {
-            case ' ': if (player.isGrounded) player.jump();/*System.out.println("JUMP")*/ break;
+            case ' ': if (player.isGrounded) {
+                player.jump();
+                soundmanager.play("jump");
+            }
+            break;
         }
     }
 
     private void update() {
-        player.update(dt);
+        if (player.alive) {
+            player.update(dt);
+
+            cactusManager.update(dt);
+
+            for (var c : cactusManager.getCacti()) {
+                if (c.collidesWith(player.X(), player.Y())) {
+                    System.out.println("GAME OVER! ");
+                    soundmanager.play("death");
+                    player.alive = false;
+                    break;
+                }
+            }
+
+        }
     }
 
     private void render() {
         Renderer.clear();
         //render here
         //borders
-        Renderer.drawline(1, 2, 1, 20, '|');
-        Renderer.drawline(1, 1, 80, 1, '-');
-        Renderer.drawline(1, 21, 80, 21, '-');
-        Renderer.drawline(80, 2, 80, 20, '|');
+        Renderer.drawline(0, 0, 0, buf_Height - 1, '|');
+        Renderer.drawline(0, 0, buf_Width - 1, 0, '-');
+        Renderer.drawline(0, buf_Height - 1, buf_Width - 1, buf_Height - 1, '-');
+        Renderer.drawline(buf_Width - 1, 1, buf_Width -1 , buf_Height - 2, '|');
 
         player.render();
+        cactusManager.render();
 
         buffer.swapBuffers();
         buffer.render();
@@ -103,11 +143,12 @@ public class Game {
             update();
             render();
 
-            try {
+           try {
                 Thread.sleep(16);
             } catch(InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
     }
 }

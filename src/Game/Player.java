@@ -6,8 +6,11 @@ public class Player {
 
     private float x;
     private float y;
-    private final float jumpForce = 10.0f;
-    private final float gravity = 20.0f;
+    private final float jumpForce = 12.5f;
+    private final float gravity = 30.0f;
+    public boolean alive;
+
+    private float ground;
 
     //public boolean isJumping;
     public boolean isGrounded;
@@ -18,9 +21,19 @@ public class Player {
     Player(float x, float y) {
         this.x = x;
         this.y = y;
+        ground = y;
 
         //isJumping = false;
+        alive = true;
         isGrounded = true;
+    }
+
+    public int X() {
+        return (int)x;
+    }
+
+    public int Y() {
+        return (int)y;
     }
 
     public void update(float dt) {
@@ -29,8 +42,8 @@ public class Player {
         x += vx * dt;
         y += vy * dt;
 
-        if (y >= 15.0f) {
-            y = 15.0f;
+        if (y >= ground) {
+            y = ground;
             vy = 0.0f;
             vx = 0.0f;
             isGrounded = true;
