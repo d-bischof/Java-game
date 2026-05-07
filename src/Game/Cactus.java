@@ -7,7 +7,7 @@ public class Cactus {
     private float x;
     private float y;
     private int height;
-    public static float speed = 20.0f;
+    public static float speed = 10.0f;
     private float Xfloat;
 
     float vx = -speed;
@@ -22,6 +22,10 @@ public class Cactus {
 
     float X() {
         return x;
+    }
+
+    int getHeight() {
+        return height;
     }
 
     void update(double dt) {

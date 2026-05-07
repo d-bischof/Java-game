@@ -2,6 +2,7 @@ package Game;
 
 import Rendering.Buffer;
 import Sound.SoundManager;
+//import sun.net.www.content.text.plain;
 import Rendering.Renderer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -20,10 +21,14 @@ public class Game {
     private int buf_Height = 10;
     private int buf_Width = 81;
 
+    private float score;
+    private int scoreMarker;
+    private final float score_Increase;
     private int ground = 6;
 
-
     private Player player;
+
+    private static int HI_score;
 
     private CactusManager cactusManager;
 
@@ -54,6 +59,12 @@ public class Game {
         soundmanager.loadSound("point", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\pickupCoin.wav");
         soundmanager.loadSound("jump", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\jump.wav");
         soundmanager.loadSound("death", "C:\\Users\\wey\\Desktop\\java-game\\sounds\\hitHurt.wav");
+
+        HI_score = 0;
+
+        score = 0;
+        score_Increase = 3.0f;
+        scoreMarker = 0;
 
         lastFrameTime = System.currentTimeMillis();
         System.out.print("\033[?25l");
@@ -96,6 +107,13 @@ public class Game {
                 soundmanager.play("jump");
             }
             break;
+
+            case '\n':
+            case '\r':
+                if (!player.alive) {
+                    resetGame();
+                }
+                break;
         }
     }
 
@@ -105,9 +123,20 @@ public class Game {
 
             cactusManager.update(dt);
 
+            score += score_Increase * dt;
+
+            //System.out.printf("Score: %d\n", (int)score);
+
+            int intScore = (int)score;
+            if (intScore != 0 && intScore % 50 == 0 && intScore > scoreMarker) {
+                soundmanager.play("point");
+                scoreMarker = intScore;
+            }
+
             for (var c : cactusManager.getCacti()) {
                 if (c.collidesWith(player.X(), player.Y())) {
-                    System.out.println("GAME OVER! ");
+                    //System.out.println("game over! press enter to restart");
+                    if ((int)score > HI_score) HI_score = (int)score;
                     soundmanager.play("death");
                     player.alive = false;
                     break;
@@ -126,11 +155,40 @@ public class Game {
         Renderer.drawline(0, buf_Height - 1, buf_Width - 1, buf_Height - 1, '-');
         Renderer.drawline(buf_Width - 1, 1, buf_Width -1 , buf_Height - 2, '|');
 
+        String s_score = String.format("%05d", (int)score);
+
+        if (HI_score > 0) {
+            String s_hi_score = String.format("HI%05d", HI_score);
+            for (int i = 0; i < s_hi_score.length(); i++) {
+                Renderer.pixel(65 + i, 1, s_hi_score.charAt(i));
+
+            }
+        }
+
+        for (int i = 0; i < s_score.length(); i++) {
+            Renderer.pixel(75 + i, 1, s_score.charAt(i));
+        }
+
+        String g_over = "Game Over! - PRESS ENTER TO RESTART";
+        if (!player.alive) {
+            for (int i = 0; i < g_over.length(); i++) {
+                Renderer.pixel(i + 23, 3, g_over.charAt(i));
+            }
+        }
+
         player.render();
         cactusManager.render();
 
         buffer.swapBuffers();
         buffer.render();
+    }
+
+    private void resetGame() {
+        score = 0.0f;
+        scoreMarker = 0;
+        player = new Player(10.0f, ground);
+        cactusManager = new CactusManager(ground, buf_Width - 1);
+
     }
 
     public void run() {
